@@ -2,6 +2,7 @@ import numpy as np
 from tabulate import tabulate
 import csv
 import pandas as pd
+
 """
 ДКР. Чисельні методи
 Варіант №2
@@ -9,29 +10,33 @@ import pandas as pd
 студентка групи КМ-23
 """
 
+
 def f(x):
     return np.sin(x) - (x - 1) ** 2
+
 
 def df(x):
     return np.cos(x) - 2 * (x - 1)
 
+
 # ------------------  метод хорд  ------------------
 def secant_method_detailed_with_steps(x0, x1, tol=1e-4, max_iter=100):
     results = []
-    prev_xk = x1  # Для обчислення різниці з попереднім значенням x_k
+    prev_xk = x1
     for i in range(max_iter):
         f_x0 = f(x0)
         f_x1 = f(x1)
         if abs(f_x1 - f_x0) < tol:
             break
         xk = x1 - f_x1 * (x1 - x0) / (f_x1 - f_x0)
-        abs_diff = abs(xk - prev_xk)  # Різниця між x_k і попереднім значенням x_(k-1)
+        abs_diff = abs(xk - prev_xk)
         prev_xk = xk
         results.append([i, x0, f_x0, x1, f_x1, xk, f(xk), abs_diff < tol])
         if abs_diff < tol:
             break
         x0, x1 = x1, xk
     return results
+
 
 # ------------------  метод дотичних  ------------------
 def newton_method_detailed_with_steps(x0, tol=1e-4, max_iter=100):
@@ -44,11 +49,12 @@ def newton_method_detailed_with_steps(x0, tol=1e-4, max_iter=100):
             break
         x1 = x0 - f_x0 / df_x0
         abs_diff = abs(x1 - x0)
-        results.append([x0, f_x0, df_x0, x1, abs_diff < tol])
+        results.append([i, x0, f_x0, df_x0, x1, abs_diff < tol])
         if abs_diff < tol:
             break
         x0 = x1
     return results
+
 
 # ------------------  метод дихотомії  ------------------
 def bisection_method_detailed_with_steps(a, b, tol=1e-4, max_iter=100):
@@ -67,19 +73,22 @@ def bisection_method_detailed_with_steps(a, b, tol=1e-4, max_iter=100):
             a = x_star
     return results
 
+
 # ------------------  метод простих ітерацій ------------------
 def simple_iteration_method_detailed_with_steps(x0, tol=1e-4, max_iter=100):
     def phi(x):
         return np.sin(x) + 1
+
     results = []
     for i in range(max_iter):
         x1 = phi(x0)
-        abs_diff = abs(x1 - x0)  # Обчислюємо різницю між x_(k+1) та x_k
-        results.append([i, x0, x1, abs_diff < tol])  # Додаємо до таблиці
-        if abs_diff < tol:  # Якщо різниця менша за допустиму похибку
+        abs_diff = abs(x1 - x0)
+        results.append([i, x0, x1, abs_diff < tol])
+        if abs_diff < tol:
             break
         x0 = x1
     return results
+
 
 # ------------------  LU-факторизація  ------------------
 def LU_factorization(A):
@@ -96,6 +105,7 @@ def LU_factorization(A):
             U[i][j] = (1 / L[i][i]) * (A[i][j] - sum(L[i][k] * U[k][j] for k in range(i)))
     return L, U
 
+
 # Знаходження визначника detA=detL
 def det(m):
     p = 1
@@ -106,18 +116,19 @@ def det(m):
                 p *= m[i][j]
     return p
 
+
 # ------------------ метод Гаусса  ------------------
 def inverse(a):
     n = len(a)
-    # Constructing the augmented matrix
+    # створення додаткової(допоміжної) одиничної матриці
     augmented_matrix = np.hstack((a, np.eye(n)))
 
-    # Gaussian elimination to get the inverse
+    # Перетворення Гаусса для оберненої матриці
     for k in range(n):
         if abs(augmented_matrix[k][k]) < 1.0e-12:
             for i in range(k + 1, n):
                 if abs(augmented_matrix[i][k]) > abs(augmented_matrix[k][k]):
-                    augmented_matrix[[k, i]] = augmented_matrix[[i, k]]  # Swapping of rows
+                    augmented_matrix[[k, i]] = augmented_matrix[[i, k]]  # зміна місцями рядків
                     break
         pivot = augmented_matrix[k][k]
         if pivot == 0:
@@ -130,9 +141,9 @@ def inverse(a):
             factor = augmented_matrix[i][k]
             augmented_matrix[i] -= factor * augmented_matrix[k]
 
-    # Extracting the inverse matrix from the augmented matrix
     inverse_matrix = augmented_matrix[:, n:]
     return inverse_matrix
+
 
 # ------------------ Метод прогонки  ------------------
 def method_progonki(A, d):
@@ -182,77 +193,138 @@ def method_progonki(A, d):
     x[-1] = gamma_i[-1]
     for i in range(n - 2, -1, -1):
         x[i] = alpha_i[i] * x[i + 1] + gamma_i[i]
-    #виведення округлених результатів
-    print("Розв'язок системи:", np.round(x,4))
-    print("Прогоночні коефіцієнти Альфа:", np.round(alpha_i,4))
-    print("Прогоночні коефіцієнти Гамма:", np.round(gamma_i,4))
+    # виведення округлених результатів
+    print("Розв'язок системи:", np.round(x, 4))
+    print("Прогоночні коефіцієнти Альфа:", np.round(alpha_i, 4))
+    print("Прогоночні коефіцієнти Гамма:", np.round(gamma_i, 4))
+
 
 def _main_():
     # ------------------  завдання 1  ------------------
     # обчислення кожним методом у заданих умовах
     secant_steps_detailed = secant_method_detailed_with_steps(0, 2)
+    secant_steps_detailed1 = secant_method_detailed_with_steps(1, 2)
+
     newton_steps_detailed = newton_method_detailed_with_steps(0)
     newton_steps_detailed_2 = newton_method_detailed_with_steps(2)
+
     bisection_steps_detailed = bisection_method_detailed_with_steps(0, 1)
+    bisection_steps_detailed1 = bisection_method_detailed_with_steps(1, 2)
+
     simple_iteration_steps_detailed = simple_iteration_method_detailed_with_steps(0)
+
+    # блок запису всіх результатів у формат csv, для подальшої конвертації у формат LaTeX
     with open("secant_method_results.csv", "w", newline='') as file:
         writer = csv.writer(file)
-        # Запис заголовків
-        writer.writerow(["i", "x0", "f(x0)", "x1", "f(x1)", "x_k", "f(x_k)", "|x_k - x_(k-1)| < tol"])
-        # Запис даних
-        writer.writerows(secant_steps_detailed)
+        writer.writerow(
+            ["i", "x0", "f(x0)", "x1", "f(x1)", "x_k", "f(x_k)",
+             "|x_k - x_(k-1)| < tol"]) # Запис заголовків
+        writer.writerows(secant_steps_detailed)  # Запис даних
 
-    with open("newt.csv", "w", newline='') as file:
+    with open("secant_method_results1.csv", "w", newline='') as file:
         writer = csv.writer(file)
-        # Запис заголовків
-        writer.writerow(["x_(k-1)", "f(x_(k-1))", "f'(x_(k-1))", "x_k", "|x_k - x_(k-1)| < e"])
-        # Запис даних
+        writer.writerow(["i", "x0", "f(x0)", "x1", "f(x1)", "x_k", "f(x_k)", "|x_k - x_(k-1)| < tol"])
+        writer.writerows(secant_steps_detailed1)
+
+    with open("newt0.csv", "w", newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["i", "x_(k-1)", "f(x_(k-1))", "f'(x_(k-1))", "x_k", "|x_k - x_(k-1)| < e"])
         writer.writerows(newton_steps_detailed)
+
+    with open("newt2.csv", "w", newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["i", "x_(k-1)", "f(x_(k-1))", "f'(x_(k-1))", "x_k", "|x_k - x_(k-1)| < e"])
+        writer.writerows(newton_steps_detailed_2)
 
     with open("bisc.csv", "w", newline='') as file:
         writer = csv.writer(file)
-        # Запис заголовків
-        writer.writerow(["i","a", "f(a)", "b", "f(b)", "x* = (a+b)/2", "f(x*)", "|b - a| < e"])
-        # Запис даних
+        writer.writerow(["i", "a", "f(a)", "b", "f(b)", "x* = (a+b)/2", "f(x*)", "|b - a| < e"])
         writer.writerows(bisection_steps_detailed)
+
+    with open("bisc1.csv", "w", newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["i", "a", "f(a)", "b", "f(b)", "x* = (a+b)/2", "f(x*)", "|b - a| < e"])
+        writer.writerows(bisection_steps_detailed1)
 
     with open("simp.csv", "w", newline='') as file:
         writer = csv.writer(file)
-        # Запис заголовків
-        writer.writerow(["i","x_k", "x_(k+1) = phi(x_k)", "|x_(k+1) - x_k| < e"])
-        # Запис даних
+        writer.writerow(["i", "x_k", "x_(k+1) = phi(x_k)", "|x_(k+1) - x_k| < e"])
         writer.writerows(simple_iteration_steps_detailed)
 
+    # завантаження CSV
+    secant = pd.read_csv('secant_method_results.csv')
+    secant1 = pd.read_csv('secant_method_results1.csv')
+    bis = pd.read_csv('bisc.csv')
+    bis1 = pd.read_csv('bisc1.csv')
+    newt0 = pd.read_csv('newt0.csv')
+    newt2 = pd.read_csv('newt2.csv')
+    simp = pd.read_csv('simp.csv')
+
+    # Експортуйте в LaTeX
+    print(secant.to_latex(index=False))
+    print(secant1.to_latex(index=False))
+    print(bis.to_latex(index=False))
+    print(bis1.to_latex(index=False))
+    print(newt0.to_latex(index=False))
+    print(newt2.to_latex(index=False))
+    print(simp.to_latex(index=False))
+
     # Створимо і виведемо таблиці для кожного методу
-    secant_table_detailed = tabulate(secant_steps_detailed,
-                                     headers=["i","a", "f(a)", "b", "f(b)", "x_k", "f(x_k)", "|x_k - x_(k-1)| < e"],
-                                     tablefmt="grid")
-    newton_table_detailed = tabulate(newton_steps_detailed, headers=["x_(k-1)", "f(x_(k-1))", "f'(x_(k-1))", "x_k", "|x_k - x_(k-1)| < e"], tablefmt="grid")
+    secant_tabled = tabulate(secant_steps_detailed,
+                             headers=["i", "a", "f(a)", "b", "f(b)", "x_k", "f(x_k)", "|x_k - x_(k-1)| < e"],
+                             tablefmt="grid")
+    secant_table1 = tabulate(secant_steps_detailed1,
+                             headers=["i", "a", "f(a)", "b", "f(b)", "x_k", "f(x_k)", "|x_k - x_(k-1)| < e"],
+                             ablefmt="grid")
 
-    newton_table_detailed_2 = tabulate(newton_steps_detailed_2,
-                                     headers=["x_(k-1)", "f(x_(k-1))", "f'(x_(k-1))", "x_k", "|x_k - x_(k-1)| < e"],
-                                     tablefmt="grid")
+    newton_table = tabulate(newton_steps_detailed,
+                            headers=["i", "x_(k-1)", "f(x_(k-1))", "f'(x_(k-1))", "x_k", "|x_k - x_(k-1)| < e"],
+                            tablefmt="grid")
 
-    bisection_table_detailed = tabulate(bisection_steps_detailed, headers=["i","a", "f(a)", "b", "f(b)", "x* = (a+b)/2", "f(x*)", "|b - a| < e"], tablefmt="grid")
+    newton_table2 = tabulate(newton_steps_detailed_2,
+                             headers=["i", "x_(k-1)", "f(x_(k-1))", "f'(x_(k-1))", "x_k", "|x_k - x_(k-1)| < e"],
+                             tablefmt="grid")
 
-    simple_iteration_table_detailed = tabulate(simple_iteration_steps_detailed, headers=["i","x_k", "x_(k+1) = phi(x_k)", "|x_(k+1) - x_k| < e"], tablefmt="grid")
+    bisection_table = tabulate(bisection_steps_detailed,
+                               headers=["i", "a", "f(a)", "b", "f(b)", "x* = (a+b)/2", "f(x*)", "|b - a| < e"],
+                               tablefmt="grid")
+    bisection_table1 = tabulate(bisection_steps_detailed1,
+                                headers=["i", "a", "f(a)", "b", "f(b)", "x* = (a+b)/2", "f(x*)", "|b - a| < e"],
+                                tablefmt="grid")
 
-    print(tabulate([["  Метод хорд  "]], tablefmt="fancy_grid"))
-    print(secant_table_detailed)
+    simple_iteration_table = tabulate(simple_iteration_steps_detailed,
+                                      headers=["i", "x_k", "x_(k+1) = phi(x_k)", "|x_(k+1) - x_k| < e"],
+                                      tablefmt="grid")
 
-    print(tabulate([["  Метод  дотичних. Метод Ньютона  "]], tablefmt="fancy_grid"))
-    print(newton_table_detailed)
+    print(tabulate([["  Метод хорд [0;2] "]],
+                   tablefmt="fancy_grid"))
+    print(secant_tabled)
 
-    print(tabulate([["  Метод  дотичних. Метод Ньютона 22222 "]], tablefmt="fancy_grid"))
-    print(newton_table_detailed_2)
+    print(tabulate([["  Метод хорд [1;2] "]],
+                   tablefmt="fancy_grid"))
+    print(secant_table1)
 
-    print(tabulate([["  Метод дихотомії. Поділ відрізку навпіл  "]], tablefmt="fancy_grid"))
-    print(bisection_table_detailed)
+    print(tabulate([["  Метод  дотичних. Метод Ньютона. Початкове наближення = 0  "]],
+                   tablefmt="fancy_grid"))
+    print(newton_table)
 
-    print(tabulate([["  Метод простих ітерацій   "]], tablefmt="fancy_grid"))
-    print(simple_iteration_table_detailed)
+    print(tabulate([["  Метод  дотичних. Метод Ньютона Початкове наближення = 2 "]],
+                   tablefmt="fancy_grid"))
+    print(newton_table2)
 
-    #умови до завлання 2,3,4
+    print(tabulate([["  Метод дихотомії. Поділ відрізку навпіл [0;1] "]],
+                   tablefmt="fancy_grid"))
+    print(bisection_table)
+
+    print(tabulate([["  Метод дихотомії. Поділ відрізку навпіл [1;2] "]],
+                   tablefmt="fancy_grid"))
+    print(bisection_table1)
+
+    print(tabulate([["  Метод простих ітерацій   "]],
+                   tablefmt="fancy_grid"))
+    print(simple_iteration_table)
+
+    # умови до завлання 2,3,4
     A = np.array([[12.45, 3.93, 6.15, 2.85],
                   [5.88, 12.68, 11.67, 3.69],
                   [5.67, 10.83, 12.06, 3.42],
@@ -270,38 +342,38 @@ def _main_():
 
     # ------------------  LU-факторизація  ------------------
     print(tabulate([["  LU-факторизація. Метод Холецького   "]], tablefmt="fancy_grid"))
-    L, U = LU_factorization(A) #обчилення матриць
-    #виведення округлених результатів
+    L, U = LU_factorization(A)  # обчилення матриць
+    # виведення округлених результатів
     print("     Матриця L:")
-    print(np.round(L,4))
+    print(np.round(L, 4))
 
     print("\n   Матриця U:")
-    print(np.round(U,4))
+    print(np.round(U, 4))
 
     # Перевірка, що A = L * U
     A_reconstructed = np.dot(L, U)
-    print("\n   Відновлена матриця A:")
+    print("\n   Відновлена матриця A (для перевірки):")
     print(A_reconstructed)
 
-    print("\n   Визначник матриці А = ", round(det(L),4))
+    print("\n   Визначник матриці А = ", round(det(L), 4))
 
     # ------------------ метод Гаусса  ------------------
     print(tabulate([["    Метод Гаусса    "]], tablefmt="fancy_grid"))
     # Обчислення оберненої матриці
     inv_a = inverse(A)
     print(" Обернена матриця:")
-    print(np.round(inv_a,3))
+    print(np.round(inv_a, 3))
 
     # Обчислення F_0 = E - A * D0
     F_0 = np.dot(np.subtract(np.eye(4), A), inv_a)
 
     print("\n Результат F_0:")
-    print(np.round(F_0,3))
+    print(np.round(F_0, 3))
 
     # Обчислення D_1 = D_0 + D_0 * F_0
     D_1 = np.add(inv_a, np.dot(inv_a, F_0))
     print("\n Результат D_1:")
-    print(np.round(D_1,3))
+    print(np.round(D_1, 3))
 
     # Норма
     norm_sub = np.dot(inv_a, F_0)
@@ -317,17 +389,5 @@ def _main_():
     print(" Mатриця коефiцiєнтiв системи:\n", A_prog)
     method_progonki(A_prog, d_prog)
 
-
-    # Завантажте CSV
-    secant = pd.read_csv('secant_method_results.csv')
-    bis = pd.read_csv('bisc.csv')
-    newt = pd.read_csv('newt.csv')
-    simp = pd.read_csv('simp.csv')
-
-    # Експортуйте в LaTeX
-    print(secant.to_latex(index=False))
-    print(bis.to_latex(index=False))
-    print(newt.to_latex(index=False))
-    print(simp.to_latex(index=False))
 
 _main_()
