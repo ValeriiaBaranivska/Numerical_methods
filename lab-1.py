@@ -1,11 +1,11 @@
 import numpy as np
 from sympy import symbols, simplify, lambdify
 
-x_values = np.array([1,2,3,4,5,6])
-L_n = [1.206948961, 4.324077125, 6.578965206,8.354248899,9.831323978,11.1035869 ]
+x_values = np.array([0,1,2,3,4,5])
+L_n = [1.732, 1 , 3.317,6.708,10.72,15.26 ]
 
 x_1 = 2.25
-x_2 = 0.75
+x_2 = 6
 x = symbols('x')
 
 lagrange_poly = 0
@@ -24,8 +24,8 @@ lagrange_func = lambdify(x, simplified_lagrange_poly, 'numpy')
 lagrange_result_x_1 = lagrange_func(x_1)
 lagrange_result_x_2 = lagrange_func(x_2)
 
-print(f"Результат обчислення x = 2.25: {lagrange_result_x_1}")
-print(f"Результат обчислення at x = 0.65: {lagrange_result_x_2}")
+print(f"Результат обчислення x_1 = 2.25: {lagrange_result_x_1}")
+print(f"Результат обчислення  x_2 = 6: {lagrange_result_x_2}")
 
 def divided_differences(x_data, y_data):
     n = len(y_data)
@@ -57,9 +57,13 @@ newton_func = lambdify(x, simplified_newton_poly, 'numpy')
 newton_result_x_1 = newton_func(x_1)
 newton_result_x_2 = newton_func(x_2)
 
-print(f"Результат обчислення  x = 2.25: {newton_result_x_1}")
-print(f"Результат обчислення  x = 0.65: {newton_result_x_2}")
+print(f"Результат обчислення  x_1 = 2.25: {newton_result_x_1}")
+print(f"Результат обчислення  x_2 = 6: {newton_result_x_2}")
 
-print("Початкова функція ln^2(5x-2), x = 2.25:", np.log(5*2.25 - 2)**2)
-print("Початкова функція  ln^2(5x-2), x = 0.65:",np.log(5*0.75 - 2)**2)
+"""print("Початкова функція ln^2(5x-2), x = 2.25:", np.log(5*2.25 - 2)**2)
+print("Початкова функція  ln^2(5x-2), x = 0.75:",np.log(5*0.75 - 2)**2)"""
+
+
+print("Початкова функція  Nikita , x_1 :",np.sqrt(2*x_1**3 -4*x_1+3))
+print("Початкова функція  Nikita , x_2 :",np.sqrt(2*x_2**3 -4*x_2+3))
 
